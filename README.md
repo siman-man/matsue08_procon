@@ -1,0 +1,2 @@
+# mstsue08_procon
+松江Ruby会議08のProgramming Contestのソースコード

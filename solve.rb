@@ -9,6 +9,7 @@ class PriorityQueue
 
   def push(node)
     @nodes << node
+    @flag = true
   end
 
   def pop
@@ -18,7 +19,7 @@ class PriorityQueue
 end
 
 class Node
-  attr_accessor :value, :ypos, :xpos, :route
+  attr_accessor :ypos, :xpos, :value, :route
 
   def initialize(ypos: 0, xpos: 0, value: 0, route: [])
     @value = value
@@ -55,16 +56,10 @@ class MazeSolver
   end
 
   def run
-    node = solve
+    answer = solve
 
-    ypos = @startY
-    xpos = @startX
-
-    node.route.each do |i|
-      ypos += DY[i]
-      xpos += DX[i]
-
-      @field[ypos][xpos] = ':'
+    answer.route.each do |y, x|
+      @field[y][x] = ':'
     end
 
     @field
@@ -90,7 +85,7 @@ class MazeSolver
 
         if @field[ny][nx] == ' '
           value = (@goalY - ny).abs + (@goalX - nx).abs
-          pque.push(Node.new(ypos: ny, xpos: nx, value: value, route: node.route + [i]))
+          pque.push(Node.new(ypos: ny, xpos: nx, value: value, route: node.route + [[ny, nx]]))
         end
       end
     end

@@ -9,7 +9,6 @@ class PriorityQueue
 
   def push(node)
     @nodes << node
-    @flag = true
   end
 
   def pop

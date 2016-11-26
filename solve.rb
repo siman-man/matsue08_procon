@@ -1,34 +1,10 @@
-class PriorityQueue
-  def initialize
-    @nodes = []
-  end
-
-  def any?
-    @nodes.any?
-  end
-
-  def push(node)
-    @nodes << node
-  end
-
-  def pop
-    @nodes.sort!
-    @nodes.pop
-  end
-end
-
 class Node
-  attr_accessor :ypos, :xpos, :value, :route
+  attr_accessor :ypos, :xpos, :route
 
-  def initialize(ypos: 0, xpos: 0, value: 0, route: [])
-    @value = value
+  def initialize(ypos: 0, xpos: 0, route: [])
     @ypos = ypos
     @xpos = xpos
     @route = route.dup
-  end
-
-  def <=>(other)
-    other.value - value
   end
 end
 
@@ -46,9 +22,7 @@ class MazeSolver
         if @field[y][x] == 'S'
           @startY = y
           @startX = x
-        elsif @field[y][x] == 'G'
-          @goalY = y
-          @goalX = x
+          break
         end
       end
     end
@@ -65,13 +39,12 @@ class MazeSolver
   end
 
   def solve
-    pque = PriorityQueue.new
-    root = Node.new(ypos: @startY, xpos: @startX)
-    pque.push(root)
+    que = []
+    que.push(Node.new(ypos: @startY, xpos: @startX))
     check_list = Array.new(@height) { Array.new(@width, false) }
 
-    while pque.any?
-      node = pque.pop
+    while que.any?
+      node = que.shift
 
       4.times do |i|
         ny = node.ypos + DY[i]
@@ -80,11 +53,10 @@ class MazeSolver
         next if check_list[ny][nx]
         check_list[ny][nx] = true
 
-        return node if ny == @goalY && nx == @goalX
+        return node if @field[ny][nx] == 'G'
 
         if @field[ny][nx] == ' '
-          value = (@goalY - ny).abs + (@goalX - nx).abs
-          pque.push(Node.new(ypos: ny, xpos: nx, value: value, route: node.route + [[ny, nx]]))
+          que.push(Node.new(ypos: ny, xpos: nx, route: node.route + [[ny, nx]]))
         end
       end
     end
@@ -93,4 +65,4 @@ end
 
 field = STDIN.each_line.map(&:chomp)
 ms = MazeSolver.new(field)
-#puts(ms.run)
+puts(ms.run)

@@ -1,48 +1,43 @@
-class MazeSolver
-  DY = [1, 0, -1, 0]
-  DX = [0, -1, 0, 1]
+GC.disable
+$field = $<.map(&:chomp)
+height = $field[0].size
+width = $field.size
 
-  def initialize(field)
-    @field = field
-    @height = @field[0].size
-    @width = @field.size
-
-    @height.times do |y|
-      @width.times do |x|
-        if @field[y][x] == 'S'
-          @startY = y
-          @startX = x
-        elsif @field[y][x] == 'G'
-          @goalY = y
-          @goalX = x
-        end
-      end
-    end
+def dfs(y, x)
+  if $field[y+1][x] == ' '
+    $field[y+1][x] = ':'
+    dfs(y+1, x)
+    $field[y+1][x] = ' '
   end
 
-  def run
-    dfs(@startY, @startX)
+  if $field[y][x-1] == ' '
+    $field[y][x-1] = ':'
+    dfs(y, x-1)
+    $field[y][x-1] = ' '
   end
 
-  def dfs(y, x)
-    4.times do |i|
-      ny = y + DY[i]
-      nx = x + DX[i]
+  if $field[y-1][x] == ' '
+    $field[y-1][x] = ':'
+    dfs(y-1, x)
+    $field[y-1][x] = ' '
+  end
 
-      if ny == @goalY && nx == @goalX
-        puts @field
-        exit
-      end
+  if $field[y][x+1] == 'G'
+    puts $field
+    exit(0)
+  end
 
-      if @field[ny][nx] == ' '
-        @field[ny][nx] = ':'
-        dfs(ny, nx)
-        @field[ny][nx] = ' '
-      end
-    end
+  if $field[y][x+1] == ' '
+    $field[y][x+1] = ':'
+    dfs(y, x+1)
+    $field[y][x+1] = ' '
   end
 end
 
-field = STDIN.each_line.map(&:chomp)
-ms = MazeSolver.new(field)
-ms.run
+height.times do |y|
+  width.times do |x|
+    if $field[y][x] == 'S'
+      dfs(y,x)
+    end
+  end
+end

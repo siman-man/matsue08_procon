@@ -1,43 +1,12 @@
-GC.disable
-$field = $<.map(&:chomp)
-height = $field[0].size
-width = $field.size
-
-def dfs(y, x)
-  if $field[y+1][x] == ' '
-    $field[y+1][x] = ':'
-    dfs(y+1, x)
-    $field[y+1][x] = ' '
-  end
-
-  if $field[y][x-1] == ' '
-    $field[y][x-1] = ':'
-    dfs(y, x-1)
-    $field[y][x-1] = ' '
-  end
-
-  if $field[y-1][x] == ' '
-    $field[y-1][x] = ':'
-    dfs(y-1, x)
-    $field[y-1][x] = ' '
-  end
-
-  if $field[y][x+1] == 'G'
-    puts $field
-    exit(0)
-  end
-
-  if $field[y][x+1] == ' '
-    $field[y][x+1] = ':'
-    dfs(y, x+1)
-    $field[y][x+1] = ' '
-  end
+GC.disable;$f=$<.map &:chomp
+def d(y,x)
+$f[y][x]!=' '&&return
+$f[y][x+1]==?G&&($f[y][x]=?:;puts$f;exit)
+$f[y][x]=?:
+d(y+1,x)
+d(y,x-1)
+d(y-1,x)
+d(y,x+1)
+$f[y][x]=' '
 end
-
-height.times do |y|
-  width.times do |x|
-    if $field[y][x] == 'S'
-      dfs(y,x)
-    end
-  end
-end
+$..times{|y|x=0;$f[y].chars{|c|c==?S&&d(y,x+1);x+=1}}
